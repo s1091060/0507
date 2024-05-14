@@ -6,7 +6,7 @@ import os
 import numpy as np
 #from talib.abstract import SMA,EMA, WMA, RSI, BBANDS, MACD
 #import sys
-import indicator_f_Lo2_short,datetime, indicator_forKBar_short
+# import indicator_f_Lo2_short,datetime, indicator_forKBar_short
 import datetime
 import pandas as pd
 import streamlit as st 
@@ -32,7 +32,14 @@ stc.html(html_temp)
 # df_original.to_pickle('kbars_2330_2022-01-01-2022-11-18.pkl')
 
 ## 读取Pickle文件
-df_original = pd.read_pickle('kbars_2330_2022-01-01-2022-11-18.pkl')
+@st.cache_data(ttl=3600, show_spinner="正在加載資料...")
+def load_data(url):
+    df = pd.read_pickle(url)
+    return df
+
+df_original = load_data('kbars_2330_2022-01-01-2022-11-18.pkl')
+
+#df_original = pd.read_pickle('kbars_2330_2022-01-01-2022-11-18.pkl')
 
 
 #df.columns  ## Index(['Unnamed: 0', 'time', 'open', 'low', 'high', 'close', 'volume','amount'], dtype='object')
@@ -113,7 +120,7 @@ KBar_dic['amount']=np.array(KBar_amount_list)
 Date = start_date.strftime("%Y-%m-%d")
 
 st.subheader("設定一根 K 棒的時間長度(分鐘)")
-cycle_duration = st.number_input('輸入一根 K 棒的時間長度(單位:分鐘, 一日=1440分鐘)', value=1440,key="KBar_duration")
+cycle_duration = st.number_input('輸入一根 K 棒的時間長度(單位:分鐘, 一日=1440分鐘)', key="KBar_duration")
 cycle_duration = int(cycle_duration)
 #cycle_duration = 1440   ## 可以改成你想要的 KBar 週期
 #KBar = indicator_f_Lo2.KBar(Date,'time',2)
